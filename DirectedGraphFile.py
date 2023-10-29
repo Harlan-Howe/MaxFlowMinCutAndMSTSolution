@@ -196,7 +196,7 @@ class DirectedGraph:
         self.edge_tables_dirty = True  # the edge_tables will need an update before we use them.
 
     def draw_self(self, window: np.ndarray = None,
-                  origin: Tuple[int] = (0, 0),
+                  origin: Tuple[int, int] = (0, 0),
                   caption: str = None,
                   color: Tuple[float, float, float] = None,
                   cut_color: Tuple[float, float, float] = (0.8, 0.0, 0.5)) -> np.ndarray:
