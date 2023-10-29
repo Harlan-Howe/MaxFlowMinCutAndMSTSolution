@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import random
 from TypesAndConstants import *
-from typing import List, Tuple, Optional, Set, TypedDict, Dict
+from typing import List, Tuple, Optional, Dict
 import logging
 
 
 class DirectedGraph:
-    
+
     VERTEX_RADIUS = 10
     EDGE_OFFSET = 4
     ARROW_SIZE = 5
