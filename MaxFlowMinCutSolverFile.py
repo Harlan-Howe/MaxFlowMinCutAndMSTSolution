@@ -122,8 +122,8 @@ class MaxFlowMinCutSolver:
         :return: a list of id's for the vertices in the graph that compose a path from start_id to end_id (inclusive), in
         order... or None, if no such path exists.
         """
-        s_id: int = graph.get_ID_for_vertex_with_label(start_label)
-        t_id: int = graph.get_ID_for_vertex_with_label(end_label)
+        s_id: int = graph.get_id_for_vertex_with_label(start_label)
+        t_id: int = graph.get_id_for_vertex_with_label(end_label)
         #TODO: find_root the path. I'd suggest something simple (BFS or DFS), perhaps with a random selection/ordering when options are equivalent....
         return None
 
@@ -161,7 +161,7 @@ class MaxFlowMinCutSolver:
         :param start_node_label:  the letter we wish to use as the starting point, most likely "S".
         :return: list of vertex id's that can be reached by a walk from the start node.
         """
-        s_id: int = residual.get_ID_for_vertex_with_label(start_node_label)
+        s_id: int = residual.get_id_for_vertex_with_label(start_node_label)
         result: List[int] = []
         frontier: List[int] = [s_id]
         #TODO: use a search algorithm to find_root all the vertices that are reachable from the elements in the frontier.
