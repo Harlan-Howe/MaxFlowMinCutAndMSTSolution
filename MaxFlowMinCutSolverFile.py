@@ -1,3 +1,6 @@
+import copy
+import random
+
 import numpy as np
 import cv2
 import time
@@ -32,7 +35,7 @@ class MaxFlowMinCutSolver:
         # --> Now generate the residual graph.
         residual: DirectedGraph = self.generate_residual(capacity, flow)
 
-        # -->  find_root a path from S to T
+        # -->  find a path from S to T
         path: List[int] = self.find_nonzero_path_in_graph(residual)
         # path should be in the format of a list of Vertex ids....
 
@@ -46,20 +49,30 @@ class MaxFlowMinCutSolver:
         # TODO - you write this next loop...
         while path is not None:
             pass
-            # find_root the minimum value along the path in the residual graph.
+            # find the minimum value along the path in the residual graph.
+            min_value = 9e9
+            for i in range(len(path)-1):
+                value = residual.get_edge_from_u_to_v(path[i],path[i+1])[capacity_key]
+                min_value = min(value,min_value)
 
             # add/subtract this minimum value to the flow graph.
-
+            for i in range(len(path) - 1):
+                flow.get_edge_from_u_to_v(path[i], path[i+1])["flow"] += min_value
             # regenerate the residual graph, now that flow has changed. (see above...)
-
-            # find_root another path through the residual from S to T. (see above...)
+            residual = self.generate_residual(capacity, flow)
+            # find another path through the residual from S to T. (see above...)
+            path: List[int] = self.find_nonzero_path_in_graph(residual)
 
             # GRAPHICS: make a graph that shows all the vertices, plus the edges on the path (see above)
             # GRAPHICS: show what the capacity, flow, residual and path look like... (see above)
-
+            path_display = self.generate_path_display(capacity, path)
+            self.display_graphs(capacity, flow, residual,
+                                path_display)  # NOTE: this takes time to generate, so you will likely want to comment
+            #                                          this out for a complicated graph.
         return flow, residual
 
-    def generate_residual(self, capacity: DirectedGraph, flow: DirectedGraph) -> DirectedGraph:
+    @staticmethod
+    def generate_residual(capacity: DirectedGraph, flow: DirectedGraph) -> DirectedGraph:
         """
         generates the "residual" graph - a consequence of the capacity and flow graphs.
         :param capacity:
@@ -70,13 +83,13 @@ class MaxFlowMinCutSolver:
         #                                                          edges.
         for e_id in capacity.E:  # loop through all the edges in capacity graph...
 
-            # try to find_root the corresponding edge in flow graph...
+            # try to find the corresponding edge in flow graph...
             capacity_edge: Edge = capacity.E[e_id]
-            # find_root the vertices for this edge.
+            # find the vertices for this edge.
             u: int = capacity_edge[KEY_U]
             v: int = capacity_edge[KEY_V]
 
-            # find_root the corresponding edge in flow.
+            # find the corresponding edge in flow.
             flow_edge: Edge = flow.get_edge_from_u_to_v(u, v)
             # just checking.... this shouldn't ever happen.
             if flow_edge is None:
@@ -86,10 +99,13 @@ class MaxFlowMinCutSolver:
             flow_amount: int = flow_edge["flow"]
 
             # build the edge or edges in residual that go with this capacity and flow edge
-            # TODO: You write this. You'll want to use "residual.add_edge(u_id=<?>, v_id=<?>,
-            # additional_info = {"capacity": <???>})"
-            # (Obviously, replace <?> with something useful.
-
+            # Done: You write this. You'll want to use "residual.add_edge(u_id=<?>, v_id=<?>,
+            #       additional_info = {"capacity": <???>})"
+            #     (Obviously, replace <?> with something useful.
+            if capacity_amount > flow_amount:
+                residual.add_edge(u, v, additional_info={"capacity": capacity_amount - flow_amount})
+            if flow_amount > 0:
+                residual.add_edge(v, u, additional_info={"capacity": flow_amount})
         return residual
 
     def generate_path_display(self, capacity: DirectedGraph, path: List[int]) -> DirectedGraph:
@@ -107,13 +123,13 @@ class MaxFlowMinCutSolver:
 
         return path_display
 
-    def find_nonzero_path_in_graph(self,
-                                   graph: DirectedGraph,
+    @staticmethod
+    def find_nonzero_path_in_graph(graph: DirectedGraph,
                                    start_label: str = "S",
                                    end_label: str = "T",
                                    key: str = "capacity") -> Optional[List[int]]:
         """
-        Uses a depth-first search (DFS) to find_root a path from the start label to the end label, where all edges have
+        Uses a depth-first search (DFS) to find a path from the start label to the end label, where all edges have
         a value for "key" that is greater than zero.
 
         :param graph:  the DirectedGraph in which to search
@@ -125,12 +141,30 @@ class MaxFlowMinCutSolver:
         """
         s_id: int = graph.get_id_for_vertex_with_label(start_label)
         t_id: int = graph.get_id_for_vertex_with_label(end_label)
-        # TODO: find_root the path. I'd suggest something simple (BFS or DFS), perhaps with a random selection/ordering
+        # Done: find the path. I'd suggest something simple (BFS or DFS), perhaps with a random selection/ordering
         #       when options are equivalent....
+        frontier: List[Tuple[int, List[int]]] = [(s_id, [s_id])]
+        visited: List[int] = []
+        while True:
+            if len(frontier) == 0:
+                return None
+            vertex_id, path_so_far = frontier.pop(0)
+            if vertex_id in visited:
+                continue
+            neighboring_edges = graph.get_edges_from_u(vertex_id)
+            random.shuffle(neighboring_edges)
+            for edge in neighboring_edges:
+                next_id = edge[KEY_V]
+                next_path = copy.deepcopy(path_so_far)
+                next_path.append(next_id)
+                if next_id == t_id:
+                    return next_path
+                frontier.append((next_id, next_path))
+            visited.append(vertex_id)
         return None
 
-    def display_graphs(self,
-                       capacity: DirectedGraph,
+    @staticmethod
+    def display_graphs(capacity: DirectedGraph,
                        flow: DirectedGraph,
                        residual: DirectedGraph,
                        path_display: DirectedGraph = None) -> np.ndarray:
@@ -165,8 +199,17 @@ class MaxFlowMinCutSolver:
         :return: list of vertex id's that can be reached by a walk from the start node.
         """
         s_id: int = residual.get_id_for_vertex_with_label(start_node_label)
-        result: List[int] = []
+        result: List[int] = [s_id]
         frontier: List[int] = [s_id]
-        # TODO: use a search algorithm to find_root all the vertices that are reachable from the elements in the
+        # TODO: use a search algorithm to find all the vertices that are reachable from the elements in the
         #  frontier.
+        while True:
+            if len(frontier) == 0:
+                break
+            vertex_id = frontier.pop(0)
+            neighbor_edges = residual.get_edges_from_u(vertex_id)
+            for edge in neighbor_edges:
+                if edge[KEY_V] not in result:
+                    frontier.append(edge[KEY_V])
+                    result.append(edge[KEY_V])
         return result
