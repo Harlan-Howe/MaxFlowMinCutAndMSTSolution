@@ -6,7 +6,7 @@ from MaxFlowMinCutSolverFile import MaxFlowMinCutSolver
 
 
 def main():
-    capacity: DirectedGraph = DirectedGraph(filename="DirectedGraph1.txt")
+    capacity: DirectedGraph = DirectedGraph(filename="DirectedGraph3.txt")
     solver: MaxFlowMinCutSolver = MaxFlowMinCutSolver()
     flow, residual = solver.find_max_flow(capacity)
 
