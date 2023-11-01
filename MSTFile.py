@@ -46,8 +46,8 @@ class MST:
         hq: List[List[int, int]] = []  # [weight, edge_id]
         for start_neighbor_edge in self.source_G.get_edges_touching(u_id):
             start_neighbor_edge_id = self.source_G.get_id_for_edge(start_neighbor_edge)
-            heapq.heappush(hq, [start_neighbor_edge["weight"], start_neighbor_edge_id])  # note these are the edges, prioritized by
-            #                                                                              lowest weight.
+            heapq.heappush(hq, [start_neighbor_edge["weight"], start_neighbor_edge_id])  # note these are the edges,
+            #                                                                              prioritized by lowest weight.
 
         while len(S) < num_Nodes:
             # TODO P1: you write this loop! I've got a start and an outline below.
@@ -58,7 +58,6 @@ class MST:
 
             if u_id not in S:  # then swap u,v so that u is the one in S
                 temp: int = u_id
-                u_id = v_id
                 v_id = temp
 
             #     if this is an internal link in S, move onto the next edge in the queue.
@@ -69,8 +68,8 @@ class MST:
             S.add(v_id)
             for neighbor_edge in self.source_G.get_edges_touching(v_id):
                 neighbor_edge_id = self.source_G.get_id_for_edge(neighbor_edge)
-                heapq.heappush(hq, [neighbor_edge["weight"], neighbor_edge_id])  # note these are the edges, prioritized by
-                #                                                                  lowest weight.
+                heapq.heappush(hq, [neighbor_edge["weight"], neighbor_edge_id])  # note these are the edges,
+                #                                                                  prioritized by lowest weight.
 
             self.update_window(caption="Prims")  # optional (and time-consuming) so you can see the algorithm in action.
 
@@ -103,8 +102,8 @@ class MST:
             # TODO K5: you write this loop! I've got a start and an outline below.
 
             w, edge_id = heapq.heappop(hq)
-            u_id: Vertex = self.source_G.E[edge_id][KEY_U]
-            v_id: Vertex = self.source_G.E[edge_id][KEY_V]
+            u_id: int = self.source_G.E[edge_id][KEY_U]
+            v_id: int = self.source_G.E[edge_id][KEY_V]
 
             #    find the roots of u and v in the disjointed set.
             u_root = self.find_root(u_id)
@@ -131,7 +130,7 @@ class MST:
     def find_root(self, vertex_id: int) -> int:
         """
         finds the id of the vertex at the root of the disjointed set for vertex id x.
-        :param x: the id of a vertex in the set
+        :param vertex_id: the id of a vertex in the set
         :return: the id of the vertex at the root of the tree containing x. This might be x, or another id.
         """
         # TODO K1: you write this method!
