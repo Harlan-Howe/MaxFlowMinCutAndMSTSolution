@@ -26,14 +26,14 @@ class UndirectedGraph(DirectedGraph):
                 e: Edge = self.E[e_id]
                 u: int = e[KEY_U]
                 if u in self.edge_table:
-                    self.u_edge_table[u].append(e_id)
+                    self.edge_table[u].append(e_id)
                 else:
-                    self.u_edge_table[u] = [e_id]
+                    self.edge_table[u] = [e_id]
                 v = e[KEY_V]
                 if v in self.edge_table:
-                    self.v_edge_table[v].append(e_id)
+                    self.edge_table[v].append(e_id)
                 else:
-                    self.v_edge_table[v] = [e_id]
+                    self.edge_table[v] = [e_id]
             self.edge_tables_dirty = False
 
     def get_edges_touching(self, u_vertex_id: int) -> List[Edge]:
@@ -58,3 +58,4 @@ class UndirectedGraph(DirectedGraph):
     def get_edges_to_v(self, v_id: int) -> List[Edge]:
         """ overrides directed version """
         return self.get_edges_touching(v_id)
+
