@@ -49,7 +49,7 @@ class MST:
             #                                                              lowest weight.
 
         while len(S) < num_Nodes:
-            # TODO: you write this loop! I've got a start and an outline below.
+            # TODO P1: you write this loop! I've got a start and an outline below.
             w, edge = heapq.heappop(hq)
             u_id: int = edge[UndirectedGraph.KEY_U]
             v_id: int = edge[UndirectedGraph.KEY_V]
@@ -78,14 +78,14 @@ class MST:
         # initialize the disjoint set.
         self.parents.clear()
         self.ranks.clear()
-        # TODO: add all vertices to the disjointed set, via the add_to_disjoint_set() method.
+        # TODO K3: add all vertices to the disjointed set, via the add_to_disjoint_set() method.
 
         # initialize a heapqueue (i.e., a priority queue). You can use your own class for this, if you'd rather.
         hq: List[Edge] = []
-        # TODO: add all edges to this queue, weighed by their "weight." (See similar code in Prim's, above.)
+        # TODO K4: add all edges to this queue, weighed by their "weight." (See similar code in Prim's, above.)
 
         while len(self.MST_result.E) < len(self.MST_result.V)-1:
-            # TODO: you write this loop! I've got a start and an outline below.
+            # TODO K5: you write this loop! I've got a start and an outline below.
 
             w, edge = heapq.heappop(hq)
             u: Vertex = edge[UndirectedGraph.KEY_U]
@@ -115,7 +115,7 @@ class MST:
         :param x: the id of a vertex in the set
         :return: the id of the vertex at the root of the tree containing x. This might be x, or another id.
         """
-        # TODO: you write this method!
+        # TODO K1: you write this method!
 
     def union(self, x: int, y: int) -> None:
         """
@@ -125,7 +125,7 @@ class MST:
         :param y: the id of another vertex.
         :return: None
         """
-        # TODO: you write this method!
+        # TODO K2: you write this method!
 
     def draw_self(self,
                   window: np.ndarray = None,
