@@ -195,6 +195,18 @@ class DirectedGraph:
 
         self.edge_tables_dirty = True  # the edge_tables will need an update before we use them.
 
+    def receive_edge(self, edge: Edge) -> None:
+        """
+        essentially an overload of add edge, this one adds a fully-built edge from another graph to this one
+        and sets the edge_tables_dirty flag. This edge will likely have a different id number in this graph
+        than it did in the source graph.
+        :param edge: the edge to add
+        :return: None
+        """
+        self.max_edge_id += 1
+        self.E[self.max_edge_id] = edge
+        self.edge_tables_dirty = True  # the edge_tables will need an update before we can use them.
+
     def draw_self(self, window: np.ndarray = None,
                   origin: Tuple[int, int] = (0, 0),
                   caption: str = None,
