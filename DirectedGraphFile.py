@@ -148,6 +148,18 @@ class DirectedGraph:
                     return edge_id
         return -1
 
+    def get_id_for_edge(self, edge: Edge) -> int:
+        """
+        finds the id number for the given edge, or -1 if edge is not in this graph.
+        :param edge: the edge to find. (Searching by memory location, not content.)
+        :return: the index of the edge in the dictionary E, or -1 if not found.
+        """
+        for edge_id in self.E.keys():
+            if self.E[edge_id] == edge:
+                return edge_id
+        return -1
+
+
     def get_edge_from_u_to_v(self, u_id: int, v_id: int) -> Optional[Edge]:
         """
         gets the edge from U to V, if any.
