@@ -159,7 +159,6 @@ class DirectedGraph:
                 return edge_id
         return -1
 
-
     def get_edge_from_u_to_v(self, u_id: int, v_id: int) -> Optional[Edge]:
         """
         gets the edge from U to V, if any.
