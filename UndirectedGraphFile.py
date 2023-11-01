@@ -13,25 +13,27 @@ class UndirectedGraph(DirectedGraph):
         super().__init__(V=V, E=E, filename=filename, keys=keys)
         self.i_am_directed: bool = False
         self.EDGE_OFFSET: int = 0
-
+        self.edge_table = self.u_edge_table
         self.edge_tables_dirty = True
-        self.edge_table: Dict[int, List[int]] = {}
+
 
     def generate_edge_tables(self) -> None:
+        self.edge_table: Dict[int, List[int]] = {}
         if self.edge_tables_dirty:
-            self.edge_table.clear()
+            self.u_edge_table.clear()
+            self.v_edge_table.clear()
             for e_id in self.E:
                 e: Edge = self.E[e_id]
                 u: int = e[KEY_U]
                 if u in self.edge_table:
-                    self.edge_table[u].append(e_id)
+                    self.u_edge_table[u].append(e_id)
                 else:
-                    self.edge_table[u] = [e_id]
+                    self.u_edge_table[u] = [e_id]
                 v = e[KEY_V]
                 if v in self.edge_table:
-                    self.edge_table[v].append(e_id)
+                    self.v_edge_table[v].append(e_id)
                 else:
-                    self.edge_table[v] = [e_id]
+                    self.v_edge_table[v] = [e_id]
             self.edge_tables_dirty = False
 
     def get_edges_touching(self, u_vertex_id: int) -> List[Edge]:
