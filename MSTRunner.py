@@ -5,11 +5,11 @@ from UndirectedGraphFile import UndirectedGraph
 
 
 def main():
-    graph = UndirectedGraph(filename="UndirectedGraph2.txt")
+    graph = UndirectedGraph(filename="UndirectedGraph1.txt")
     window = graph.draw_self(caption="Original")
     mst = MST(graph)
     mst.solve(method=MST.METHOD_KRUSKAL)
-    print(mst.disjoint_set)
+
     #  Change the caption to "Prim" if desired....
     window = mst.draw_self(origin=(0, 400), window=window, caption="Kruskal", color=(1.0, 0.75, 0.25))
 
