@@ -18,8 +18,7 @@ class MST:
                  method: int = METHOD_PRIMS):
         self.source_G: UndirectedGraph = G
         self.MST_result: Optional[UndirectedGraph] = None  # "Optional" means "could be None or what's in the brackets."
-        self.parents: [Dict[int, Optional[int]]] = {}
-        self.ranks: Dict[int, int] = {}
+        self.disjoint_set: [Dict[int, List[int, int]]] = {} # {this_id: [parent_id, this_rank]}  -1 means No parent.
         if method == self.METHOD_PRIMS:
             self.find_MST_by_Prims()
         if method == self.METHOD_KRUSKAL:
@@ -76,13 +75,20 @@ class MST:
         self.MST_result: UndirectedGraph = UndirectedGraph(V=self.source_G.V, E={})
 
         # initialize the disjoint set.
-        self.parents.clear()
-        self.ranks.clear()
+        self.disjoint_set.clear()
         # TODO K3: add all vertices to the disjointed set, via the add_to_disjoint_set() method.
+
+        for v_id in self.source_G.V.keys():
+            print(f"{v_id=}")
+            self.add_to_disjoint_set(v_id)
 
         # initialize a heapqueue (i.e., a priority queue). You can use your own class for this, if you'd rather.
         hq: List[Edge] = []
         # TODO K4: add all edges to this queue, weighed by their "weight." (See similar code in Prim's, above.)
+        for edge in self.source_G.E.items():
+            print(f"{edge[1]= }")
+            heapq.heappush(hq, [edge[1]["weight"], edge])
+
 
         while len(self.MST_result.E) < len(self.MST_result.V)-1:
             # TODO K5: you write this loop! I've got a start and an outline below.
@@ -102,12 +108,11 @@ class MST:
 
     def add_to_disjoint_set(self, x: int) -> None:
         """
-        adds this vertex id to the disjoint set, with its parent set to None, and its rank set to 1.
+        adds this vertex id to the disjoint set, with its parent set to -1, and its rank set to 1.
         :param x: an id for a vertex.
         :return: none
         """
-        self.parents[x] = None
-        self.ranks[x] = 1
+        self.disjoint_set[x] = [-1, 1]
 
     def find_root(self, x: int) -> int:
         """
@@ -116,6 +121,11 @@ class MST:
         :return: the id of the vertex at the root of the tree containing x. This might be x, or another id.
         """
         # TODO K1: you write this method!
+        p = x
+        while self.disjoint_set[p][0] != -1:  # while the parent isn't none...
+            p = self.disjoint_set[p][0]  # make p become its own parent.
+        # Now we know p doesn't have a parent; it must be the root.
+        return p
 
     def union(self, x: int, y: int) -> None:
         """
@@ -126,6 +136,19 @@ class MST:
         :return: None
         """
         # TODO K2: you write this method!
+        if self.find_root(x) == self.find_root(y):
+            return
+
+        rank_x = self.disjoint_set[x][1]
+        rank_y = self.disjoint_set[y][1]
+
+        if rank_x < rank_y:
+            self.disjoint_set[x][0] = y
+        elif rank_x > rank_y:
+            self.disjoint_set[y][0] = x
+        else:
+            self.disjoint_set[x][0] = y
+            self.disjoint_set[y][1] += 1
 
     def draw_self(self,
                   window: np.ndarray = None,
