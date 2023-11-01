@@ -14,11 +14,12 @@ class MST:
     METHOD_PRIMS = 1
 
     def __init__(self,
-                 G: UndirectedGraph,
-                 method: int = METHOD_PRIMS):
+                 G: UndirectedGraph):
         self.source_G: UndirectedGraph = G
         self.MST_result: Optional[UndirectedGraph] = None  # "Optional" means "could be None or what's in the brackets."
-        self.disjoint_set: [Dict[int, List[int, int]]] = {}  # {this_id: [parent_id, this_rank]}  -1 means No parent.
+        self.disjoint_set: Dict[int, List[int, int]] = {}  # {this_id: [parent_id, this_rank]}  -1 means No parent.
+
+    def solve(self, method: int) -> None:
         if method == self.METHOD_PRIMS:
             self.find_MST_by_Prims()
         if method == self.METHOD_KRUSKAL:
@@ -127,14 +128,14 @@ class MST:
         """
         self.disjoint_set[x] = [-1, 1]
 
-    def find_root(self, x: Vertex) -> Vertex:
+    def find_root(self, vertex_id: int) -> int:
         """
         finds the id of the vertex at the root of the disjointed set for vertex id x.
         :param x: the id of a vertex in the set
         :return: the id of the vertex at the root of the tree containing x. This might be x, or another id.
         """
         # TODO K1: you write this method!
-        p = x
+        p = vertex_id
         while self.disjoint_set[p][0] != -1:
             p = self.disjoint_set[p][0]  # make p become its own parent.
         # Now we know p doesn't have a parent; it must be the root.
