@@ -42,16 +42,18 @@ class MST:
 
         # initialize a heapqueue (i.e., a priority queue). You can use your own class for this, if you'd rather. This is
         #  similar to the green dotted lines in the video, but there might also be internal edges you'll need to ignore.
-        hq: List[List[int, Edge]] = []
-        for edge in self.source_G.get_edges_touching(u_id):
-            heapq.heappush(hq, [edge["weight"], edge])  # note these are the edges, prioritized by
-            #                                                              lowest weight.
+        hq: List[List[int, int]] = []  # [weight, edge_id]
+        for start_neighbor_edge in self.source_G.get_edges_touching(u_id):
+            start_neighbor_edge_id = self.source_G.get_id_for_edge(start_neighbor_edge)
+            heapq.heappush(hq, [start_neighbor_edge["weight"], start_neighbor_edge_id])  # note these are the edges, prioritized by
+            #                                                                              lowest weight.
 
         while len(S) < num_Nodes:
             # TODO P1: you write this loop! I've got a start and an outline below.
-            w, edge = heapq.heappop(hq)
-            u_id: int = edge[UndirectedGraph.KEY_U]
-            v_id: int = edge[UndirectedGraph.KEY_V]
+            w, edge_id = heapq.heappop(hq)
+            edge = self.source_G.E[edge_id]
+            u_id: int = edge[KEY_U]
+            v_id: int = edge[KEY_V]
 
             if u_id not in S:  # then swap u,v so that u is the one in S
                 temp: int = u_id
@@ -59,8 +61,15 @@ class MST:
                 v_id = temp
 
             #     if this is an internal link in S, move onto the next edge in the queue.
-
+            if v_id in S:
+                continue
             #     otherwise add this edge to our MST, and update S and the queue.
+            self.MST_result.receive_edge(edge)
+            S.add(v_id)
+            for neighbor_edge in self.source_G.get_edges_touching(v_id):
+                neighbor_edge_id = self.source_G.get_id_for_edge(neighbor_edge)
+                heapq.heappush(hq, [neighbor_edge["weight"], neighbor_edge_id])  # note these are the edges, prioritized by
+                #                                                                  lowest weight.
 
             self.update_window(caption="Prims")  # optional (and time-consuming) so you can see the algorithm in action.
 
@@ -88,7 +97,6 @@ class MST:
         for edge_id in self.source_G.E.keys():
             print(f"{edge_id= }")
             heapq.heappush(hq, (self.source_G.E[edge_id]["weight"], edge_id))
-
 
         while len(self.MST_result.E) < len(self.MST_result.V)-1:
             # TODO K5: you write this loop! I've got a start and an outline below.
