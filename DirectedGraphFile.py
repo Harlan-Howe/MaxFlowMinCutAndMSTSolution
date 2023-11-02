@@ -148,17 +148,6 @@ class DirectedGraph:
                     return edge_id
         return -1
 
-    def get_id_for_edge(self, edge: Edge) -> int:
-        """
-        finds the id number for the given edge, or -1 if edge is not in this graph.
-        :param edge: the edge to find. (Searching by memory location, not content.)
-        :return: the index of the edge in the dictionary E, or -1 if not found.
-        """
-        for edge_id in self.E.keys():
-            if self.E[edge_id] == edge:
-                return edge_id
-        return -1
-
     def get_edge_from_u_to_v(self, u_id: int, v_id: int) -> Optional[Edge]:
         """
         gets the edge from U to V, if any.
@@ -170,12 +159,37 @@ class DirectedGraph:
         if edge_id is None:
             return None
         return self.E[edge_id]
-    
-    def get_vertex_for_id(self, v_id: int) -> Vertex:
-        return self.V[v_id]
 
-    def get_edge_for_id(self, e_id: int) -> Edge:
-        return self.E[e_id]
+    def get_edge_for_id(self, e_id: int) -> Optional[Edge]:
+        """
+        finds the edge for the given id, or None if it is not in this graph.
+        :param e_id: the id we are searching for
+        :return: the corresponding edge, or None.
+        """
+        if e_id in self.E:
+            return self.E[e_id]
+        return None
+    
+    def get_id_for_edge(self, edge: Edge) -> int:
+        """
+        finds the id number for the given edge, or -1 if edge is not in this graph.
+        :param edge: the edge to find. (Searching by memory location, not content.)
+        :return: the index of the edge in the dictionary E, or -1 if not found.
+        """
+        for edge_id in self.E.keys():
+            if self.E[edge_id] == edge:
+                return edge_id
+        return -1
+
+    def get_vertex_for_id(self, v_id: int) -> Optional[Vertex]:
+        """
+        finds the vertex for the given id, or None if there isn't one with that id in this graph.
+        :param v_id: the id we're looking for
+        :return: the Vertex, or None.
+        """
+        if v_id in self.V:
+            return self.V[v_id]
+        return None
 
     def get_id_for_vertex_with_label(self, label: str) -> int:
         """
